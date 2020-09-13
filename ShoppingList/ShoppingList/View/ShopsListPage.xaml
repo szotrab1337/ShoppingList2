@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="ShoppingList.View.ShopsListPage"
+             Title="Lista sklepów">
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <ScrollView AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+            <StackLayout>
+                <Label Text="TEST"/>
+                <Label Text="TEST1"/>
+                <Label Text="TEST"/>
+                <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST"/>
+                    <Label Text="TEST1"/>
+                    <Label Text="TEST1"/>
+                </StackLayout>
+            </ScrollView>
+            <ImageButton Source="add.png" BackgroundColor="Transparent"
+                         AbsoluteLayout.LayoutFlags="PositionProportional"
+                         AbsoluteLayout.LayoutBounds=".95,.95,60,60"/>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>
