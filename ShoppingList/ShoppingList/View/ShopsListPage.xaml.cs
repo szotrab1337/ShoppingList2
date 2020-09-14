@@ -1,4 +1,5 @@
-﻿using ShoppingList.ViewModel;
+﻿using Acr.UserDialogs;
+using ShoppingList.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,17 +19,38 @@ namespace ShoppingList.View
         {
             InitializeComponent();
 
-            this.BindingContext = viewModel = new ShopsListViewModel();
+            this.BindingContext = viewModel = new ShopsListViewModel(Navigation);
         }
 
         private async void DeleteCliced(object sender, EventArgs e)
         {
-            var mi = ((MenuItem)sender);
-            int id = Convert.ToInt32(mi.CommandParameter);
-            var shop = viewModel.Shops.Where(x => x.ShopID == id).FirstOrDefault();
-            await App.Database.DeleteShopAsync(shop);
-            viewModel.Shops.Remove(shop);
-            viewModel.Renumber();
+            try
+            {
+                var mi = ((MenuItem)sender);
+                int id = Convert.ToInt32(mi.CommandParameter);
+                var shop = viewModel.Shops.Where(x => x.ShopID == id).FirstOrDefault();
+                await App.Database.DeleteShopAsync(shop);
+                viewModel.Shops.Remove(shop);
+                viewModel.Renumber();
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
+        private async void EditClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var mi = ((MenuItem)sender);
+                int id = Convert.ToInt32(mi.CommandParameter);
+                await Navigation.PushAsync(new EditShopPage(id));
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
         }
     }
 }

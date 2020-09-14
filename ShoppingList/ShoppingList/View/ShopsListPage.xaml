@@ -24,7 +24,8 @@
                                     <ViewCell.ContextActions>
                                         <MenuItem Text="Edytuj"
                                           IsDestructive="True"
-                                          />
+                                          Clicked="EditClicked"
+                                                  CommandParameter="{Binding ShopID}"/>
                                         <MenuItem x:Name="Delete"
                                             Text="Usuń"
                                           IsDestructive="True"
@@ -39,12 +40,13 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="25"/>
                                             <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <StackLayout Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="4">
-                                            <Label Margin="8,0,0,0"  FontAttributes="Bold"  Text="{Binding Number}"  HorizontalOptions="Start" VerticalOptions="Center"  Grid.Column="0">
+                                            <Label Margin="10,0,0,0"  FontAttributes="Bold"  Text="{Binding Number}"  HorizontalOptions="Start" VerticalOptions="Center"  Grid.Column="0">
                                             </Label>
-                                            <Label Margin="10,0,0,0" TextDecorations="{Binding TextDec}"  Text="{Binding Name}" VerticalOptions="Center" HorizontalOptions="Start" Grid.Column="1"/>
-                                            <Label TextDecorations="{Binding TextDec}"  Text="{Binding NumberOfPositions, StringFormat='- {0} pozycji'}" VerticalOptions="Center" HorizontalOptions="Start" Grid.Column="1"/>
+                                            <Label Margin="15,0,0,0" TextDecorations="{Binding TextDec}"  Text="{Binding Name}" VerticalOptions="Center" HorizontalOptions="Start" Grid.Column="1"/>
+                                            <Label TextDecorations="{Binding TextDec}"  Text="{Binding NumberOfPositions, StringFormat='{0} pozycji'}" VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="0,0,10,0" Grid.Column="2"/>
                                         </StackLayout>
                                     </Grid>
                                 </ViewCell>
@@ -55,7 +57,9 @@
             </ScrollView>
             <ImageButton Source="add.png" BackgroundColor="Transparent"
                          AbsoluteLayout.LayoutFlags="PositionProportional"
-                         AbsoluteLayout.LayoutBounds=".95,.95,60,60"/>
+                         AbsoluteLayout.LayoutBounds=".95,.95,60,60"
+                            Command="{Binding OpneNewShopCommand}"/>
+                         <!--Clicked="AddItemClicked"-->
         </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

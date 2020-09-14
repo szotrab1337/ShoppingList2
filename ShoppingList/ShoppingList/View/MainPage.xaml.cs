@@ -18,7 +18,6 @@ namespace ShoppingList.View
             InitializeComponent();
 
             masterPage.listView.ItemSelected += OnItemSelected;
-
         }
 
         void OnItemSelected(object sender, SelectedItemChangedEventArgs e)

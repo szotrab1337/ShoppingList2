@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="ShoppingList.View.EditShopPage"
+             Title="Edytuj sklep">
+    <ContentPage.Content>
+        <StackLayout>
+            <Grid VerticalOptions="CenterAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Editor Text="{Binding ShopName}" Grid.Row="0" Margin="70,0,70,0" />
+                <Button Command="{Binding SaveShopCommand}" Text="Dodaj" Grid.Row="1" Margin="100,0,100,0"  BackgroundColor="#3399FF" TextColor="White" HeightRequest="30"/>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

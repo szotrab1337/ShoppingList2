@@ -34,6 +34,11 @@ namespace ShoppingList.Model
             return _database.Table<Shop>().Where(x => x.ShopID == shop.ShopID).FirstOrDefaultAsync();
         }
 
+        public Task<Shop> GetShopByID(int id)
+        {
+            return _database.Table<Shop>().Where(x => x.ShopID == id).FirstOrDefaultAsync();
+        }
+
         public Task SaveItemAsync(Item item)
         {
             return _database.InsertAsync(item);

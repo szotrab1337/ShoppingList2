@@ -1,5 +1,6 @@
 ﻿using Acr.UserDialogs;
 using ShoppingList.Model;
+using ShoppingList.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,13 +32,27 @@ namespace ShoppingList.ViewModel
                 handler(this, e);
         }
 
-        public ShopsListViewModel()
+        public ShopsListViewModel(INavigation navigation)
         {
+            this.Navigation = navigation;
+
             Shops = new ObservableCollection<Shop>();
+            OpneNewShopCommand = new Command(OpneNewShopAction);
+
+            MessagingCenter.Subscribe<AddShopPageViewModel>(this, "Refresh", (LoadAgain) => 
+            {
+                LoadShops();
+            });
+            MessagingCenter.Subscribe<EditShopPageViewModel>(this, "Refresh", (LoadAgain) => 
+            {
+                LoadShops();
+            });
 
             LoadShops();
         }
 
+        public INavigation Navigation { get; set; }
+        public ICommand OpneNewShopCommand { get; set; }
         public ObservableCollection<Shop> Shops
         {
             get { return _Shops; }
@@ -62,26 +77,52 @@ namespace ShoppingList.ViewModel
             //await App.Database.SaveShopAsync(new Shop { Name = "Lidl6" });
             //await App.Database.SaveShopAsync(new Shop { Name = "Lidl7" });
 
-            Shops.Clear();
-            List<Shop> allShops = await App.Database.GetShopsAsync();
-
-            for (int i = 0; i < allShops.Count; i++)
+            try
             {
-                allShops[i].Number = i + 1;
-                Shops.Add(allShops[i]);
+                Shops.Clear();
+                List<Shop> allShops = await App.Database.GetShopsAsync();
+
+                for (int i = 0; i < allShops.Count; i++)
+                {
+                    allShops[i].Number = i + 1;
+                    Shops.Add(allShops[i]);
+                }
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
             }
         }
 
         public void Renumber()
         {
-            for (int i = 0; i < Shops.Count; i++)
+            try
             {
-                Shops[i].Number = i + 1;
-            }
+                for (int i = 0; i < Shops.Count; i++)
+                {
+                    Shops[i].Number = i + 1;
+                }
 
-            ObservableCollection<Shop> tempShops = Shops;
-            Shops = null;
-            Shops = tempShops;
+                ObservableCollection<Shop> tempShops = Shops;
+                Shops = null;
+                Shops = tempShops;
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
+        public async void OpneNewShopAction()
+        {
+            try
+            {
+                await Navigation.PushAsync(new AddShopPage());
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
         }
     }
 }
