@@ -29,7 +29,7 @@ namespace ShoppingList.Model
         {
             return _database.Table<Item>().Where(x => x.ItemID == item.ItemID).FirstOrDefaultAsync();
         }
-        public Task<Shop> GetItemAsync(Shop shop)
+        public Task<Shop> GetShopAsync(Shop shop)
         {
             return _database.Table<Shop>().Where(x => x.ShopID == shop.ShopID).FirstOrDefaultAsync();
         }

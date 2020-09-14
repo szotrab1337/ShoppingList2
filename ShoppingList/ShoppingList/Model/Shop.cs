@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ShoppingList.Model;
 
 namespace ShoppingList.Model
 {
@@ -12,5 +13,7 @@ namespace ShoppingList.Model
         public string Name { get; set; }
         [Ignore]
         public int Number { get; set; }
+        [Ignore]
+        public int NumberOfPositions { get; set; }
     }
 }

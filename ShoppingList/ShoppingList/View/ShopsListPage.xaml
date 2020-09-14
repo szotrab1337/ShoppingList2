@@ -5,56 +5,52 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="ShoppingList.View.ShopsListPage"
-             Title="Lista sklepów">
+             Title="Lista sklepów"
+             x:Name="ShopsList">
     <ContentPage.Content>
         <AbsoluteLayout>
             <ScrollView AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
             <StackLayout>
-                <Label Text="TEST"/>
-                <Label Text="TEST1"/>
-                <Label Text="TEST"/>
-                <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST"/>
-                    <Label Text="TEST1"/>
-                    <Label Text="TEST1"/>
+                    <ListView
+                      ItemsSource="{Binding Shops}"
+                        Grid.Column="0"
+                     Grid.Row="0"
+                     Grid.ColumnSpan="3"
+                      SelectedItem="{Binding SelectedShop}"
+                      SelectionMode="None">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <ViewCell.ContextActions>
+                                        <MenuItem Text="Edytuj"
+                                          IsDestructive="True"
+                                          />
+                                        <MenuItem x:Name="Delete"
+                                            Text="Usuń"
+                                          IsDestructive="True"
+                                          Clicked="DeleteCliced"
+                                            CommandParameter="{Binding ShopID}"/>
+                                          <!--Command="{Binding Path=BindingContext.DeleteShop, Source={x:Reference ShopsList}}"/>-->
+                                    </ViewCell.ContextActions>
+                                    <Grid>
+                                        <!--<Grid.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnTapped" NumberOfTapsRequired="2" CommandParameter="{Binding ID_Item}"/>
+                                        </Grid.GestureRecognizers>-->
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="25"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackLayout Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="4">
+                                            <Label Margin="8,0,0,0"  FontAttributes="Bold"  Text="{Binding Number}"  HorizontalOptions="Start" VerticalOptions="Center"  Grid.Column="0">
+                                            </Label>
+                                            <Label Margin="10,0,0,0" TextDecorations="{Binding TextDec}"  Text="{Binding Name}" VerticalOptions="Center" HorizontalOptions="Start" Grid.Column="1"/>
+                                            <Label TextDecorations="{Binding TextDec}"  Text="{Binding NumberOfPositions, StringFormat='- {0} pozycji'}" VerticalOptions="Center" HorizontalOptions="Start" Grid.Column="1"/>
+                                        </StackLayout>
+                                    </Grid>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </StackLayout>
             </ScrollView>
             <ImageButton Source="add.png" BackgroundColor="Transparent"
