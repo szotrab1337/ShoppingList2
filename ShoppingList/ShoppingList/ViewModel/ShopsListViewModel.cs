@@ -15,9 +15,13 @@ namespace ShoppingList.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged(string propertyName)
+        //protected void OnPropertyChanged(string propertyName)
+        //{
+        //    OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        //}
+        protected virtual void OnPropertyChanged(string propertyName)
         {
-            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         protected void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -32,11 +36,7 @@ namespace ShoppingList.ViewModel
             Shops = new ObservableCollection<Shop>();
 
             LoadShops();
-
-            DeleteShop = new Command(DeleteShopAction);
         }
-
-        public ICommand DeleteShop { get; set; }
 
         public ObservableCollection<Shop> Shops
         {
@@ -54,6 +54,14 @@ namespace ShoppingList.ViewModel
 
         public async void LoadShops()
         {
+            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl1" });
+            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl2" });
+            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl3" });
+            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl4" });
+            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl5" });
+            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl6" });
+            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl7" });
+
             Shops.Clear();
             List<Shop> allShops = await App.Database.GetShopsAsync();
 
@@ -64,22 +72,16 @@ namespace ShoppingList.ViewModel
             }
         }
 
-        public async void DeleteShopAction()
+        public void Renumber()
         {
-            //UserDialogs.Instance.Alert("Hej", SelectedShop.Name + " " + SelectedShop.ShopID, "OK");
+            for (int i = 0; i < Shops.Count; i++)
+            {
+                Shops[i].Number = i + 1;
+            }
 
-            //await App.Database.DeleteShopAsync(SelectedShop);
-            //LoadShops();
-            //SelectedShop = null;
+            ObservableCollection<Shop> tempShops = Shops;
+            Shops = null;
+            Shops = tempShops;
         }
-
-        //public async void DeleteClicked(object sender, EventArgs e)
-        //{           
-        //    var mi = ((MenuItem)sender);
-        //    int id = Convert.ToInt32(mi.CommandParameter);
-        //    var shop = Shops.Where(x => x.ShopID == id).FirstOrDefault();
-        //    await App.Database.DeleteShopAsync(SelectedShop);
-        //    LoadShops();
-        //}
     }
 }

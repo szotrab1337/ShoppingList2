@@ -12,7 +12,7 @@
             <ScrollView AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
             <StackLayout>
                     <ListView
-                      ItemsSource="{Binding Shops}"
+                      ItemsSource="{Binding Shops, Mode=TwoWay}"
                         Grid.Column="0"
                      Grid.Row="0"
                      Grid.ColumnSpan="3"

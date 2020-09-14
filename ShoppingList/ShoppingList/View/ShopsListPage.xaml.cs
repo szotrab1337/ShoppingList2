@@ -27,7 +27,8 @@ namespace ShoppingList.View
             int id = Convert.ToInt32(mi.CommandParameter);
             var shop = viewModel.Shops.Where(x => x.ShopID == id).FirstOrDefault();
             await App.Database.DeleteShopAsync(shop);
-            viewModel.LoadShops();
+            viewModel.Shops.Remove(shop);
+            viewModel.Renumber();
         }
     }
 }
