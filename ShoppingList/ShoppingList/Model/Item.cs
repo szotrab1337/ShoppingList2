@@ -9,6 +9,7 @@ namespace ShoppingList.Model
     {
         [PrimaryKey, AutoIncrement]
         public int ItemID { get; set; }
+        public int ShopID { get; set; }
         public string Name { get; set; }
         public bool IsChecked { get; set; }
         public double Quantity { get; set; }

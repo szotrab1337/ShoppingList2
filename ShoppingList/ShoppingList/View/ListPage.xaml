@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="ShoppingList.View.ListPage"
-             Title="Lista zakupów">
+             Title="{Binding Title, StringFormat='Lista zakupów - {0}'}">
     <ContentPage.Content>
         <AbsoluteLayout>
             <ImageButton Source="add.png" BackgroundColor="Transparent"

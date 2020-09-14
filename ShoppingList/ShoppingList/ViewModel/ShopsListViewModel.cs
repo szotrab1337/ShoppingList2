@@ -16,10 +16,6 @@ namespace ShoppingList.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        //protected void OnPropertyChanged(string propertyName)
-        //{
-        //    OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-        //}
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -62,21 +58,33 @@ namespace ShoppingList.ViewModel
         public Shop SelectedShop
         {
             get { return _SelectedShop; }
-            set { _SelectedShop = value; OnPropertyChanged("SelectedShop"); }
+            set
+            {
+                _SelectedShop = value; OnPropertyChanged("SelectedShop");
+                if (SelectedShop != null)
+                {
+                    OpenList();
+                }
+            }
         }
         private Shop _SelectedShop;
 
 
+        public async void OpenList()
+        {
+            try
+            {
+                await Navigation.PushAsync(new ListPage(SelectedShop));
+                LoadShops();
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
         public async void LoadShops()
         {
-            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl1" });
-            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl2" });
-            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl3" });
-            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl4" });
-            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl5" });
-            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl6" });
-            //await App.Database.SaveShopAsync(new Shop { Name = "Lidl7" });
-
             try
             {
                 Shops.Clear();
