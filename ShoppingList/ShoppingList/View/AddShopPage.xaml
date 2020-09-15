@@ -6,7 +6,8 @@
              mc:Ignorable="d"
              x:Class="ShoppingList.View.AddShopPage"
              Title="Nowy sklep"
-             x:Name="NewShop">
+             x:Name="NewShop"
+             BackgroundColor="#f2f2f2">
     <ContentPage.Content>
         <StackLayout>
             <Grid VerticalOptions="CenterAndExpand">
@@ -17,7 +18,7 @@
                 </Grid.RowDefinitions>
                 <Label Text="Nazwa sklepu" Margin="70,0,70,0" VerticalOptions="EndAndExpand"/>
                 <Editor Text="{Binding ShopName}" Grid.Row="1" Margin="70,0,70,0" />
-                <Button Command="{Binding AddShopCommand}" Text="Dodaj" Grid.Row="2" Margin="100,0,100,0"  BackgroundColor="#3399FF" TextColor="White" HeightRequest="30"/>
+                <Button CornerRadius="6" Command="{Binding AddShopCommand}" Text="Dodaj" Grid.Row="2" Margin="100,0,100,0"  BackgroundColor="#3399FF" TextColor="White" HeightRequest="30"/>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

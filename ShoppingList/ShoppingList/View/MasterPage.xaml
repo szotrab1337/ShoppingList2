@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:ShoppingList.View"
              mc:Ignorable="d"
              x:Class="ShoppingList.View.MasterPage"
-             Title="Moja aplikacja">
+             Title="Moja aplikacja"
+             BackgroundColor="#f2f2f2">
     <StackLayout>
         <Label Text="Menu" Margin="20,10,10,10" FontSize="Title"/>
         <ListView x:Name="listView" x:FieldModifier="public">

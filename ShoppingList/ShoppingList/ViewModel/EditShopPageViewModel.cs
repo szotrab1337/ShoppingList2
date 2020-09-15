@@ -68,6 +68,7 @@ namespace ShoppingList.ViewModel
                     Shop shop = await App.Database.GetShopByID(ShopID);
                     shop.Name = ShopName;
                     await App.Database.UpdateShopAsync(shop);
+                    UserDialogs.Instance.Toast("Dokonano edycji sklepu.");
                     MessagingCenter.Send(this, "Refresh");
                     await Navigation.PopToRootAsync();
                 }

@@ -50,6 +50,7 @@ namespace ShoppingList.ViewModel
                 if(!string.IsNullOrEmpty(ShopName))
                 {
                     await App.Database.SaveShopAsync(new Shop { Name = ShopName });
+                    UserDialogs.Instance.Toast("Dodano nowy sklep.");
                     MessagingCenter.Send(this, "Refresh");
                     await Navigation.PopToRootAsync();
                 }

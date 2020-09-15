@@ -20,5 +20,10 @@ namespace ShoppingList.View
             InitializeComponent();
             this.BindingContext = viewModel = new ListPageViewModel(Navigation, shop);
         }
+
+        private void NewItem(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -1,8 +1,11 @@
-﻿using ShoppingList.Model;
+﻿using Acr.UserDialogs;
+using ShoppingList.Model;
+using ShoppingList.View;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace ShoppingList.ViewModel
@@ -29,9 +32,13 @@ namespace ShoppingList.ViewModel
             this.Shop = shop;
 
             Title = Shop.Name;
+
+            AddNewItemCommand = new Command(AddNewItemAction);
         }
 
         public INavigation Navigation { get; set; }
+
+        public ICommand AddNewItemCommand { get; set; }
         public Shop Shop { get; set; }
 
         public string Title
@@ -40,5 +47,17 @@ namespace ShoppingList.ViewModel
             set { _Title = value; OnPropertyChanged("Title"); }
         }
         private string _Title;
+
+        public async void AddNewItemAction()
+        {
+            try
+            {
+                await Navigation.PushAsync(new AddNewItemPage());
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
     }
 }

@@ -4,15 +4,14 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="ShoppingList.View.ListPage"
-             Title="{Binding Title, StringFormat='Lista zakupów - {0}'}"
+             x:Class="ShoppingList.View.AddNewItemPage"
+             Title="Nowy przedmiot"
              BackgroundColor="#f2f2f2">
     <ContentPage.Content>
-        <AbsoluteLayout>
-            <ImageButton Source="add.png" BackgroundColor="Transparent"
-                         AbsoluteLayout.LayoutFlags="PositionProportional"
-                         AbsoluteLayout.LayoutBounds=".95,.95,60,60"
-                         Command="{Binding AddNewItemCommand}"/>
-        </AbsoluteLayout>
+        <StackLayout>
+            <Label Text="Kasia"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand" />
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

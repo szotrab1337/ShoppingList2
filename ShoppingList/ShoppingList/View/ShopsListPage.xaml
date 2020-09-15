@@ -6,7 +6,8 @@
              mc:Ignorable="d"
              x:Class="ShoppingList.View.ShopsListPage"
              Title="Lista sklepów"
-             x:Name="ShopsList">
+             x:Name="ShopsList"
+             BackgroundColor="#f2f2f2">
     <ContentPage.Content>
         <AbsoluteLayout>
             <ScrollView AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
@@ -20,7 +21,7 @@
                       SelectionMode="Single">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <ViewCell>
+                                <ViewCell x:Name="myViewCell">
                                     <ViewCell.ContextActions>
                                         <MenuItem Text="Edytuj"
                                           IsDestructive="True"

@@ -29,9 +29,25 @@ namespace ShoppingList.View
                 var mi = ((MenuItem)sender);
                 int id = Convert.ToInt32(mi.CommandParameter);
                 var shop = viewModel.Shops.Where(x => x.ShopID == id).FirstOrDefault();
-                await App.Database.DeleteShopAsync(shop);
-                viewModel.Shops.Remove(shop);
-                viewModel.Renumber();
+
+                var result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig
+                {
+                    Message = "Czy na pewno chcesz usunąć sklep " + shop.Name + "?",
+                    OkText = "Tak",
+                    CancelText = "Nie",
+                    Title = "Potwierdzenie"
+                });
+
+                if (result)
+                {
+                    await App.Database.DeleteShopAsync(shop);
+                    UserDialogs.Instance.Toast("Usunięto sklep.");
+                    viewModel.Shops.Remove(shop);
+                    viewModel.Renumber();
+
+                }
+                   
+
             }
             catch (Exception ex)
             {
