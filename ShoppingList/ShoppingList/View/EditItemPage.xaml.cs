@@ -12,14 +12,14 @@ using Xamarin.Forms.Xaml;
 namespace ShoppingList.View
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class AddNewItemPage : ContentPage
+    public partial class EditItemPage : ContentPage
     {
-        AddNewItemPageViewModel viewModel;
-        public AddNewItemPage(Shop shop)
+        EditItemPageViewModel viewModel;
+        public EditItemPage(Shop shop, Item item)
         {
             InitializeComponent();
 
-            this.BindingContext = viewModel = new AddNewItemPageViewModel(Navigation, shop);
+            this.BindingContext = viewModel = new EditItemPageViewModel(Navigation, shop, item);
         }
     }
 }

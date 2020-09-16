@@ -4,8 +4,8 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="ShoppingList.View.AddNewItemPage"
-             Title="{Binding Title, StringFormat='{0} - nowy przedmiot'}"
+             x:Class="ShoppingList.View.EditItemPage"
+             Title="{Binding Title, StringFormat='{0} - edycja'}"
              BackgroundColor="#f2f2f2">
     <ContentPage.Content>
         <StackLayout>
@@ -26,7 +26,7 @@
                 <Label Text="Ilość" Grid.Row="2" Margin="15,10,0,-15"/>
                 <Editor Text="{Binding ItemQuantity}" HorizontalOptions="FillAndExpand" Placeholder="wprowadź ilość" Margin="15,0,10,0" Grid.Column="0" Grid.Row="3" />
                 <Stepper  Value="{Binding StepperValue}" HorizontalOptions="Center" Minimum="0.5" Maximum="1000" Increment="0.5" Grid.Column="1" Grid.Row="3"  Margin="0,0,15,0"/>
-                <Button Command="{Binding AddCommand}" CornerRadius="6" TextColor="White" BackgroundColor="#3399FF"   Margin="0,30,0,0" HorizontalOptions="CenterAndExpand" WidthRequest="200" Text="Zatwierdź" Grid.Row="4" Grid.ColumnSpan="2"/>
+                <Button Command="{Binding SaveCommand}" CornerRadius="6" TextColor="White" BackgroundColor="#3399FF"   Margin="0,30,0,0" HorizontalOptions="CenterAndExpand" WidthRequest="200" Text="Zatwierdź" Grid.Row="4" Grid.ColumnSpan="2"/>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              x:Class="ShoppingList.View.ShopsListPage"
              Title="Lista sklepów"
-             x:Name="ShopsList"
+             x:Name="ShopsListPageViewModel"
              BackgroundColor="#f2f2f2">
     <ContentPage.Content>
         <AbsoluteLayout>
@@ -25,13 +25,13 @@
                                     <ViewCell.ContextActions>
                                         <MenuItem Text="Edytuj"
                                           IsDestructive="True"
-                                          Clicked="EditClicked"
-                                                  CommandParameter="{Binding ShopID}"/>
+                                                  CommandParameter="{Binding .}"
+                                        Command="{Binding Path=BindingContext.EditCommand, Source={x:Reference ShopsListPageViewModel}}"/>
                                         <MenuItem x:Name="Delete"
                                             Text="Usuń"
                                           IsDestructive="True"
-                                          Clicked="DeleteCliced"
-                                            CommandParameter="{Binding ShopID}"/>
+                                                  Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference ShopsListPageViewModel}}"
+                                            CommandParameter="{Binding .}"/>
                                           <!--Command="{Binding Path=BindingContext.DeleteShop, Source={x:Reference ShopsList}}"/>-->
                                     </ViewCell.ContextActions>
                                     <Grid>
@@ -47,7 +47,7 @@
                                             <Label Margin="10,0,0,0"  FontAttributes="Bold"  Text="{Binding Number}"  HorizontalOptions="Start" VerticalOptions="Center"  Grid.Column="0">
                                             </Label>
                                             <Label Margin="15,0,0,0" TextDecorations="{Binding TextDec}"  Text="{Binding Name}" VerticalOptions="Center" HorizontalOptions="Start" Grid.Column="1"/>
-                                            <Label TextDecorations="{Binding TextDec}"  Text="{Binding NumberOfPositions, StringFormat='{0} pozycji'}" VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="0,0,10,0" Grid.Column="2"/>
+                                            <Label  Text="{Binding NumberOfPositions}" VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="0,0,10,0" Grid.Column="2"/>
                                         </StackLayout>
                                     </Grid>
                                 </ViewCell>

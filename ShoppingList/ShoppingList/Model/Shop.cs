@@ -14,6 +14,6 @@ namespace ShoppingList.Model
         [Ignore]
         public int Number { get; set; }
         [Ignore]
-        public int NumberOfPositions { get; set; }
+        public string NumberOfPositions { get; set; }
     }
 }

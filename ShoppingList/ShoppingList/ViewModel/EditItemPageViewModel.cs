@@ -9,7 +9,7 @@ using Xamarin.Forms;
 
 namespace ShoppingList.ViewModel
 {
-    public class AddNewItemPageViewModel : INotifyPropertyChanged
+    public class EditItemPageViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -27,18 +27,21 @@ namespace ShoppingList.ViewModel
 
         public INavigation Navigation { get; set; }
         public Shop Shop { get; set; }
-        public AddNewItemPageViewModel(INavigation navigation, Shop shop)
+        public Item Item { get; set; }
+
+        public EditItemPageViewModel(INavigation navigation, Shop shop, Item item)
         {
             this.Navigation = navigation;
             this.Shop = shop;
+            this.Item = item;
 
-            Title = Shop.Name;
-            StepperValue = 1;
+            Title = Item.Name;
+            ItemName = Item.Name;
+            StepperValue = item.Quantity;
 
-            AddCommand = new Command(AddAction);
+            SaveCommand = new Command(SaveAction);
         }
-
-        public ICommand AddCommand { get; set; }
+        public ICommand SaveCommand { get; set; }
 
         public string ItemName
         {
@@ -69,7 +72,7 @@ namespace ShoppingList.ViewModel
         }
         private double? _StepperValue;
 
-        public async void AddAction()
+        public async void SaveAction()
         {
             try
             {
@@ -83,15 +86,17 @@ namespace ShoppingList.ViewModel
                 }
                 else
                 {
-                    await App.Database.SaveItemAsync(new Item
+                    Item itemToUpdate = new Item
                     {
-                        ShopID = Shop.ShopID,
-                        IsChecked = false,
+                        ItemID = Item.ItemID,
+                        ShopID = Item.ShopID,
+                        IsChecked = Item.IsChecked,
                         Name = ItemName,
                         Quantity = StepperValue.Value
-                    });
+                    };
+                    await App.Database.UpdateItemAsync(itemToUpdate);
 
-                    UserDialogs.Instance.Toast("Dodano nowy przedmiot.");
+                    UserDialogs.Instance.Toast("Dokonano edycji przedmiotu.");
                     MessagingCenter.Send(this, "Refresh");
                     await Navigation.PopAsync();
                 }

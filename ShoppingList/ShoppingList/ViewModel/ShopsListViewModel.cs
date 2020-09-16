@@ -34,6 +34,8 @@ namespace ShoppingList.ViewModel
 
             Shops = new ObservableCollection<Shop>();
             OpneNewShopCommand = new Command(OpneNewShopAction);
+            EditCommand = new Command(EditAction);
+            DeleteCommand = new Command(DeleteAction);
 
             MessagingCenter.Subscribe<AddShopPageViewModel>(this, "Refresh", (LoadAgain) => 
             {
@@ -44,11 +46,23 @@ namespace ShoppingList.ViewModel
                 LoadShops();
             });
 
+            MessagingCenter.Subscribe<AddNewItemPageViewModel>(this, "Refresh", (LoadAgain) =>
+            {
+                LoadShops();
+            });
+            
+            MessagingCenter.Subscribe<ListPageViewModel>(this, "Refresh", (LoadAgain) =>
+            {
+                LoadShops();
+            });
+
             LoadShops();
         }
 
         public INavigation Navigation { get; set; }
         public ICommand OpneNewShopCommand { get; set; }
+        public ICommand EditCommand { get; set; }
+        public ICommand DeleteCommand { get; set; }
         public ObservableCollection<Shop> Shops
         {
             get { return _Shops; }
@@ -93,7 +107,25 @@ namespace ShoppingList.ViewModel
                 for (int i = 0; i < allShops.Count; i++)
                 {
                     allShops[i].Number = i + 1;
+                    string quantity = (await App.Database.GetItemsByShopAsync(allShops[i].ShopID)).Count.ToString();
+
+                    switch (quantity)
+                    {
+                        case "1":
+                            quantity = quantity + " pozycja";
+                            break;
+                        case "2":
+                        case "3":
+                        case "4":
+                            quantity = quantity + " pozycje";
+                            break;
+                        default:
+                            quantity = quantity + " pozycji";
+                            break;
+                    }
+                    allShops[i].NumberOfPositions = quantity;
                     Shops.Add(allShops[i]);
+
                 }
             }
             catch (Exception ex)
@@ -126,6 +158,46 @@ namespace ShoppingList.ViewModel
             try
             {
                 await Navigation.PushAsync(new AddShopPage());
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
+        public async void EditAction(object sender)
+        {
+            try
+            {
+                Shop shop = (Shop)sender;
+                await Navigation.PushAsync(new EditShopPage(shop.ShopID));
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
+        public async void DeleteAction(object sender)
+        {
+            try
+            {
+                Shop shop = (Shop)sender;
+                var result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig
+                {
+                    Message = "Czy na pewno chcesz usunąć sklep " + shop.Name + "?",
+                    OkText = "Tak",
+                    CancelText = "Nie",
+                    Title = "Potwierdzenie"
+                });
+
+                if (result)
+                {
+                    await App.Database.DeleteShopAsync(shop);
+                    UserDialogs.Instance.Toast("Usunięto sklep.");
+                    Shops.Remove(shop);
+                    Renumber();
+                }
             }
             catch (Exception ex)
             {

@@ -21,6 +21,10 @@ namespace ShoppingList.Model
         {
             return _database.Table<Item>().ToListAsync();
         }
+        public Task<List<Item>> GetItemsByShopAsync(int id)
+        {
+            return _database.Table<Item>().Where(x => x.ShopID == id).ToListAsync();
+        }
         public Task<List<Shop>> GetShopsAsync()
         {
             return _database.Table<Shop>().ToListAsync();

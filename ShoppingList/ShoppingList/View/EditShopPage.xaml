@@ -16,7 +16,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Label Text="Nazwa sklepu" Margin="70,0,70,0" VerticalOptions="EndAndExpand"/>
-                <Editor Text="{Binding ShopName}" Grid.Row="1" Margin="70,0,70,0" />
+                <Editor Placeholder="wprowadź nazwę" Text="{Binding ShopName}" Grid.Row="1" Margin="70,0,70,0" />
                 <Button CornerRadius="6" Command="{Binding SaveShopCommand}" Text="Dodaj" Grid.Row="2" Margin="100,0,100,0"  BackgroundColor="#3399FF" TextColor="White" HeightRequest="30"/>
             </Grid>
         </StackLayout>
