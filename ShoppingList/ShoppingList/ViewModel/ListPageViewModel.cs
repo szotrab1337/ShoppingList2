@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -40,6 +41,7 @@ namespace ShoppingList.ViewModel
             //EditCommand = new Command(async (object obj) => await EditAction(obj));
             EditCommand = new Command(EditAction);
             DeleteCommand = new Command(DeleteAction);
+            DoubleTapCommand = new Command(DoubleTapAction);
 
             MessagingCenter.Subscribe<AddNewItemPageViewModel>(this, "Refresh", (LoadAgain) =>
             {
@@ -58,6 +60,7 @@ namespace ShoppingList.ViewModel
         public ICommand AddNewItemCommand { get; set; }
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
+        public ICommand DoubleTapCommand { get; set; }
         public Shop Shop { get; set; }
 
         public string Title
@@ -91,13 +94,18 @@ namespace ShoppingList.ViewModel
             try
             {
                 Items.Clear();
-                List<Item> allItems = await App.Database.GetItemsByShopAsync(Shop.ShopID);
-
+                List<Item> allItems = (await App.Database.GetItemsByShopAsync(Shop.ShopID)).OrderBy(x => x.IsChecked).ThenBy(x => x.Name).ToList();
+                
                 for (int i = 0; i < allItems.Count; i++)
                 {
                     allItems[i].Number = i + 1;
+                    if (allItems[i].IsChecked == true)
+                        allItems[i].TextDec = TextDecorations.Strikethrough;
+                    else
+                        allItems[i].TextDec = TextDecorations.None;
                     Items.Add(allItems[i]);
                 }
+                OnPropertyChanged("Items");
 
                 foreach (var item in Items)
                 {
@@ -110,11 +118,25 @@ namespace ShoppingList.ViewModel
             }
         }
 
-        private void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private async void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "IsChecked")
+            try
             {
-                UserDialogs.Instance.Toast("ZmienionoItems");
+                if (e.PropertyName == "IsChecked")
+                {
+                    Item item = (Item)sender;
+                    await App.Database.UpdateItemAsync(item);
+                    if (item.IsChecked == true)
+                        Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().TextDec = TextDecorations.Strikethrough;
+                    else
+                        Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().TextDec = TextDecorations.None;
+
+                    OnPropertyChanged("Items");
+                }
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
             }
         }
 
@@ -151,6 +173,26 @@ namespace ShoppingList.ViewModel
                     Renumber();
                     MessagingCenter.Send(this, "Refresh");
                 }
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
+        public async void DoubleTapAction(object sender)
+        {
+            try
+            {
+                Item item = (Item)sender;
+                await App.Database.UpdateItemAsync(item);
+                Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().IsChecked = !item.IsChecked;
+                if (item.IsChecked == true)
+                    Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().TextDec = TextDecorations.Strikethrough;
+                else
+                    Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().TextDec = TextDecorations.None;
+
+                OnPropertyChanged("Items");
             }
             catch (Exception ex)
             {

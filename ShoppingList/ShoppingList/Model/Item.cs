@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Xamarin.Forms;
 
 namespace ShoppingList.Model
 {
@@ -25,6 +26,22 @@ namespace ShoppingList.Model
                 }
             }
         }
+        [Ignore]
+        public TextDecorations TextDec
+        {
+            get
+            {
+                return _TextDec;
+            }
+            set
+            {
+                _TextDec = value;
+                NotifyPropertyChanged();              
+            }
+        }
+
+        [Ignore]
+        private TextDecorations _TextDec { get; set; }
         public double Quantity { get; set; }
         [Ignore]
         public int Number { get; set; }

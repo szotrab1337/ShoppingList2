@@ -37,9 +37,9 @@
                                           CommandParameter="{Binding .}"/>
                                         </ViewCell.ContextActions>
                                         <Grid>
-                                            <!--<Grid.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="OnTapped" NumberOfTapsRequired="2" CommandParameter="{Binding ID_Item}"/>
-                                            </Grid.GestureRecognizers>-->
+                                            <Grid.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Path=BindingContext.DoubleTapCommand, Source={x:Reference ListPageViewModel}}" NumberOfTapsRequired="2" CommandParameter="{Binding .}"/>
+                                            </Grid.GestureRecognizers>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="25"/>
                                                 <ColumnDefinition Width="20"/>
@@ -47,11 +47,11 @@
                                                 <ColumnDefinition Width="20"/>
                                             </Grid.ColumnDefinitions>
                                             <StackLayout Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="4">
-                                                <CheckBox  IsChecked="{Binding IsChecked, Mode=TwoWay}"  Grid.Column="0" /> <!--CheckedChanged="OnCheckChanged"-->
-                                                <Label FontAttributes="Bold"  Text="{Binding Number}" Margin="2" HorizontalOptions="Start" VerticalOptions="Center"  Grid.Column="1">
+                                                <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"  Grid.Column="0" /> <!--CheckedChanged="OnCheckChanged"-->
+                                                <Label TextDecorations="{Binding TextDec}" FontAttributes="Bold"  Text="{Binding Number}" Margin="2" HorizontalOptions="Start" VerticalOptions="Center"  Grid.Column="1">
                                                 </Label>
                                                 <Label TextDecorations="{Binding TextDec}"  Text="{Binding Name}" VerticalOptions="Center" HorizontalOptions="Start" Grid.Column="2"/>
-                                                <Label Text="{Binding Quantity, StringFormat='{0:F1}x'}" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Grid.Column="3" Margin="0,0,10,0"/>
+                                                <Label TextDecorations="{Binding TextDec}" Text="{Binding Quantity, StringFormat='{0:F1}x'}" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Grid.Column="3" Margin="0,0,10,0"/>
                                             </StackLayout>
                                         </Grid>
                                     </ViewCell>
