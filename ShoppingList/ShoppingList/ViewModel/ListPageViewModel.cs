@@ -98,10 +98,23 @@ namespace ShoppingList.ViewModel
                     allItems[i].Number = i + 1;
                     Items.Add(allItems[i]);
                 }
+
+                foreach (var item in Items)
+                {
+                    item.PropertyChanged += ItemPropertyChanged;
+                }
             }
             catch (Exception ex)
             {
                 UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
+        private void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsChecked")
+            {
+                UserDialogs.Instance.Toast("ZmienionoItems");
             }
         }
 

@@ -18,7 +18,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <ListView 
-                         ItemsSource="{Binding Items}"
+                         ItemsSource="{Binding Items, Mode=TwoWay}"
                          Grid.Column="0"
                          Grid.Row="0"
                          Grid.ColumnSpan="3"
@@ -46,8 +46,8 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="20"/>
                                             </Grid.ColumnDefinitions>
-                                            <StackLayout x:Name="test" Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="4">
-                                                <CheckBox IsChecked="{Binding IsChecked}" Grid.Column="0" /> <!--CheckedChanged="OnCheckChanged"-->
+                                            <StackLayout Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="4">
+                                                <CheckBox  IsChecked="{Binding IsChecked, Mode=TwoWay}"  Grid.Column="0" /> <!--CheckedChanged="OnCheckChanged"-->
                                                 <Label FontAttributes="Bold"  Text="{Binding Number}" Margin="2" HorizontalOptions="Start" VerticalOptions="Center"  Grid.Column="1">
                                                 </Label>
                                                 <Label TextDecorations="{Binding TextDec}"  Text="{Binding Name}" VerticalOptions="Center" HorizontalOptions="Start" Grid.Column="2"/>
