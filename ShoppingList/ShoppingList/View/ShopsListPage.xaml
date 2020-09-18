@@ -58,7 +58,7 @@
             <ImageButton Source="add.png" BackgroundColor="Transparent"
                          AbsoluteLayout.LayoutFlags="PositionProportional"
                          AbsoluteLayout.LayoutBounds=".95,.95,60,60"
-                            Command="{Binding OpneNewShopCommand}"/>
+                            Command="{Binding OpenNewShopCommand}"/>
                          <!--Clicked="AddItemClicked"-->
         </AbsoluteLayout>
     </ContentPage.Content>

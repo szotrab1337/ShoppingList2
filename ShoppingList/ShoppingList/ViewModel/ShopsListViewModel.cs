@@ -33,7 +33,7 @@ namespace ShoppingList.ViewModel
             this.Navigation = navigation;
 
             Shops = new ObservableCollection<Shop>();
-            OpneNewShopCommand = new Command(OpneNewShopAction);
+            OpenNewShopCommand = new Command(OpenNewShopAcion);
             EditCommand = new Command(EditAction);
             DeleteCommand = new Command(DeleteAction);
            // OpenShopCommand = new Command(OpenShopAction);
@@ -61,7 +61,7 @@ namespace ShoppingList.ViewModel
         }
 
         public INavigation Navigation { get; set; }
-        public ICommand OpneNewShopCommand { get; set; }
+        public ICommand OpenNewShopCommand { get; set; }
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
        // public ICommand OpenShopCommand { get; set; }
@@ -170,7 +170,7 @@ namespace ShoppingList.ViewModel
             }
         }
 
-        public async void OpneNewShopAction()
+        public async void OpenNewShopAcion()
         {
             try
             {
@@ -184,7 +184,6 @@ namespace ShoppingList.ViewModel
                     OkText = "Dodaj",
                     Placeholder = "wprowadź nazwę",
                     Title = "Nowy sklep",
-
                 });
 
                 if (result.Ok)
@@ -203,7 +202,7 @@ namespace ShoppingList.ViewModel
                     }
                     else
                     {
-                        UserDialogs.Instance.Alert("Wprowadź poprawną nazwę sklepu!", "Błąd", "OK");
+                        UserDialogs.Instance.Alert("Wprowadź poprawną nazwę sklepu!", "Błąd", "OK");                      
                     }
                 }
             }
