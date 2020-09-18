@@ -22,7 +22,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Label Text="Nazwa" Grid.ColumnSpan="2" Grid.Row="0" Margin="15,5,0,0"/>
-                <Editor Text="{Binding ItemName}" Placeholder="wprowadź nazwę produktu" Margin="15,5,15,0" VerticalOptions="Start" Grid.ColumnSpan="2" Grid.Row="1"/>
+                <Editor Keyboard="Chat"  Text="{Binding ItemName}" Placeholder="wprowadź nazwę produktu" Margin="15,5,15,0" VerticalOptions="Start" Grid.ColumnSpan="2" Grid.Row="1"/>
                 <Label Text="Ilość" Grid.Row="2" Margin="15,10,0,-15"/>
                 <Editor Text="{Binding ItemQuantity}" HorizontalOptions="FillAndExpand" Placeholder="wprowadź ilość" Margin="15,0,10,0" Grid.Column="0" Grid.Row="3" />
                 <Stepper  Value="{Binding StepperValue}" HorizontalOptions="Center" Minimum="0.5" Maximum="1000" Increment="0.5" Grid.Column="1" Grid.Row="3"  Margin="0,0,15,0"/>

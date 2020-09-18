@@ -36,6 +36,7 @@ namespace ShoppingList.ViewModel
             OpneNewShopCommand = new Command(OpneNewShopAction);
             EditCommand = new Command(EditAction);
             DeleteCommand = new Command(DeleteAction);
+           // OpenShopCommand = new Command(OpenShopAction);
 
             MessagingCenter.Subscribe<AddShopPageViewModel>(this, "Refresh", (LoadAgain) => 
             {
@@ -63,12 +64,14 @@ namespace ShoppingList.ViewModel
         public ICommand OpneNewShopCommand { get; set; }
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
+       // public ICommand OpenShopCommand { get; set; }
         public ObservableCollection<Shop> Shops
         {
             get { return _Shops; }
             set { _Shops = value; OnPropertyChanged("Shops"); }
         }
         private ObservableCollection<Shop> _Shops;
+
         public Shop SelectedShop
         {
             get { return _SelectedShop; }
@@ -83,7 +86,6 @@ namespace ShoppingList.ViewModel
         }
         private Shop _SelectedShop;
 
-
         public async void OpenList()
         {
             try
@@ -96,6 +98,21 @@ namespace ShoppingList.ViewModel
                 UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
             }
         }
+
+
+        //public async void OpenShopAction(object sender)
+        //{
+        //    try
+        //    {
+        //        Shop shop = (Shop)sender;
+        //        await Navigation.PushAsync(new ListPage(shop));
+        //        LoadShops();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+        //    }
+        //}
 
         public async void LoadShops()
         {
@@ -157,7 +174,38 @@ namespace ShoppingList.ViewModel
         {
             try
             {
-                await Navigation.PushAsync(new AddShopPage());
+                //await Navigation.PushAsync(new AddShopPage());
+                PromptResult result = await UserDialogs.Instance.PromptAsync(new PromptConfig
+                {
+                    Message = "Wprowadź nazwę sklepu",
+                    CancelText = "Anuluj",
+                    InputType = InputType.Name,
+                    IsCancellable = true,
+                    OkText = "Dodaj",
+                    Placeholder = "wprowadź nazwę",
+                    Title = "Dodaj sklep",
+
+                });
+
+                if (result.Ok)
+                {
+                    if (!string.IsNullOrEmpty(result.Text))
+                    {
+                        //string text = result.Text.First().ToString().ToUpper() + result.Text.Substring(1);
+                        await App.Database.SaveShopAsync(new Shop { Name = result.Text.First().ToString().ToUpper() + result.Text.Substring(1) });
+                        Shop shop = (await App.Database.GetShopsAsync()).LastOrDefault();
+                        shop.Number = Shops.Count + 1;
+                        shop.NumberOfPositions = "0 pozycji";
+                        Shops.Add(shop);
+                        UserDialogs.Instance.Toast("Dodano nowy sklep.");
+                        //MessagingCenter.Send(this, "Refresh");
+                        //await Navigation.PopToRootAsync();
+                    }
+                    else
+                    {
+                        UserDialogs.Instance.Alert("Wprowadź poprawną nazwę sklepu!", "Błąd", "OK");
+                    }
+                }
             }
             catch (Exception ex)
             {

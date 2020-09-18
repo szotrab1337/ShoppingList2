@@ -17,8 +17,8 @@
                         Grid.Column="0"
                      Grid.Row="0"
                      Grid.ColumnSpan="3"
-                      SelectedItem="{Binding SelectedShop}"
-                      SelectionMode="Single">
+                      SelectionMode="Single"
+                        SelectedItem="{Binding SelectedShop}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell x:Name="myViewCell">
@@ -32,11 +32,10 @@
                                           IsDestructive="True"
                                                   Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference ShopsListPageViewModel}}"
                                             CommandParameter="{Binding .}"/>
-                                          <!--Command="{Binding Path=BindingContext.DeleteShop, Source={x:Reference ShopsList}}"/>-->
                                     </ViewCell.ContextActions>
                                     <Grid>
                                         <!--<Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Tapped="OnTapped" NumberOfTapsRequired="2" CommandParameter="{Binding ID_Item}"/>
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenShopCommand,  Source={x:Reference ShopsListPageViewModel}}" NumberOfTapsRequired="1" CommandParameter="{Binding .}"/>
                                         </Grid.GestureRecognizers>-->
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="25"/>
