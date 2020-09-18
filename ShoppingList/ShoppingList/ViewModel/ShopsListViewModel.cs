@@ -183,7 +183,7 @@ namespace ShoppingList.ViewModel
                     IsCancellable = true,
                     OkText = "Dodaj",
                     Placeholder = "wprowadź nazwę",
-                    Title = "Dodaj sklep",
+                    Title = "Nowy sklep",
 
                 });
 
