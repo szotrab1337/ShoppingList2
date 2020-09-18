@@ -42,6 +42,9 @@ namespace ShoppingList.ViewModel
             EditCommand = new Command(EditAction);
             DeleteCommand = new Command(DeleteAction);
             DoubleTapCommand = new Command(DoubleTapAction);
+            RefreshCommand = new Command(RefreshAction);
+            SwipeRightCommand = new Command(SwipeRightAction);
+            SwipeLeftCommand = new Command(SwipeLeftAction);
 
             MessagingCenter.Subscribe<AddNewItemPageViewModel>(this, "Refresh", (LoadAgain) =>
             {
@@ -61,6 +64,9 @@ namespace ShoppingList.ViewModel
         public ICommand EditCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
         public ICommand DoubleTapCommand { get; set; }
+        public ICommand RefreshCommand { get; set; }
+        public ICommand SwipeRightCommand { get; set; }
+        public ICommand SwipeLeftCommand { get; set; }
         public Shop Shop { get; set; }
 
         public string Title
@@ -93,17 +99,48 @@ namespace ShoppingList.ViewModel
         {
             try
             {
+                UserDialogs.Instance.ShowLoading("Ładowanie...", MaskType.Black);
+                await LoadData();
+                UserDialogs.Instance.HideLoading();
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
+        public async Task LoadData()
+        {
+            try
+            {
                 Items.Clear();
-                List<Item> allItems = (await App.Database.GetItemsByShopAsync(Shop.ShopID)).OrderBy(x => x.IsChecked).ThenBy(x => x.Name).ToList();
-                
+                List<Item> allItems = (await App.Database.GetItemsByShopAsync(Shop.ShopID)).OrderByDescending(x => x.IsPresent).ThenBy(x => x.IsChecked).ThenBy(x => x.Name).ToList();
+
                 for (int i = 0; i < allItems.Count; i++)
                 {
                     allItems[i].Number = i + 1;
                     if (allItems[i].IsChecked == true)
+                    {
                         allItems[i].TextDec = TextDecorations.Strikethrough;
+                        allItems[i].BgdColor = Color.FromRgb(179, 255, 204);
+                    }
                     else
+                    {
                         allItems[i].TextDec = TextDecorations.None;
+                        allItems[i].BgdColor = Color.Transparent;
+
+                    }
+
+                    if (allItems[i].IsPresent && !allItems[i].IsChecked)
+                    {
+                        allItems[i].BgdColor = Color.Transparent;
+                    }
+                    else if (!allItems[i].IsPresent && !allItems[i].IsChecked)
+                    {
+                        allItems[i].BgdColor = Color.FromRgb(255, 153, 128);
+                    }
                     Items.Add(allItems[i]);
+
                 }
                 OnPropertyChanged("Items");
 
@@ -125,13 +162,42 @@ namespace ShoppingList.ViewModel
                 if (e.PropertyName == "IsChecked")
                 {
                     Item item = (Item)sender;
+                    item.IsPresent = true;
                     await App.Database.UpdateItemAsync(item);
                     if (item.IsChecked == true)
+                    {
                         Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().TextDec = TextDecorations.Strikethrough;
+                        Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().BgdColor = Color.FromRgb(179, 255, 204);
+                    }
                     else
+                    {
                         Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().TextDec = TextDecorations.None;
+                        Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().BgdColor = Color.Transparent;
+                    }
 
                     OnPropertyChanged("Items");
+                }
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
+        public void CheckIsPresent(Item item)
+        {
+            try
+            {
+                if (!item.IsChecked)
+                {
+                    if (item.IsPresent)
+                    {
+                        Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().BgdColor = Color.Transparent;
+                    }
+                    else
+                    {
+                        Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().BgdColor = Color.FromRgb(255, 153, 128);
+                    }
                 }
             }
             catch (Exception ex)
@@ -188,9 +254,15 @@ namespace ShoppingList.ViewModel
                 await App.Database.UpdateItemAsync(item);
                 Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().IsChecked = !item.IsChecked;
                 if (item.IsChecked == true)
+                {
                     Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().TextDec = TextDecorations.Strikethrough;
+                    Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().BgdColor = Color.FromRgb(179, 255, 204);
+                }
                 else
+                {
                     Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().TextDec = TextDecorations.None;
+                    Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().BgdColor = Color.Transparent;
+                }
 
                 OnPropertyChanged("Items");
             }
@@ -198,6 +270,46 @@ namespace ShoppingList.ViewModel
             {
                 UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
             }
+        }
+
+        public async void SwipeRightAction(object sender)
+        {
+            try
+            {
+                Item item = (Item)sender;
+                if (!item.IsChecked && item.IsPresent)
+                {
+                    item.IsPresent = !item.IsPresent;
+                    await App.Database.UpdateItemAsync(item);
+                    Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().BgdColor = Color.FromRgb(255, 153, 128);
+                }
+                OnPropertyChanged("Items");
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+
+        }
+
+        public async void SwipeLeftAction(object sender)
+        {
+            try
+            {
+                Item item = (Item)sender;
+                if (!item.IsChecked && !item.IsPresent)
+                {
+                    item.IsPresent = !item.IsPresent;
+                    await App.Database.UpdateItemAsync(item);
+                    Items.Where(x => x.ItemID == item.ItemID).FirstOrDefault().BgdColor = Color.Transparent;
+                }
+                OnPropertyChanged("Items");
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+
         }
 
         public void Renumber()
@@ -212,6 +324,20 @@ namespace ShoppingList.ViewModel
                 ObservableCollection<Item> tempItems = Items;
                 Items = null;
                 Items = tempItems;
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
+        public async void RefreshAction()
+        {
+            try
+            {
+                UserDialogs.Instance.ShowLoading("Ładowanie...", MaskType.Black);
+                await LoadData();
+                UserDialogs.Instance.HideLoading();
             }
             catch (Exception ex)
             {

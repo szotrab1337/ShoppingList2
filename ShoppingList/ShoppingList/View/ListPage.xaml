@@ -8,6 +8,9 @@
              Title="{Binding Title, StringFormat='Lista zakupów - {0}'}"
              BackgroundColor="#f2f2f2"
              x:Name="ListPageViewModel">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="refresh12.png"  Command="{Binding Path=BindingContext.RefreshCommand, Source={x:Reference ListPageViewModel}}"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <AbsoluteLayout>
             <ScrollView AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
@@ -36,9 +39,11 @@
                                           IsDestructive="True"
                                           CommandParameter="{Binding .}"/>
                                         </ViewCell.ContextActions>
-                                        <Grid>
+                                        <Grid BackgroundColor="{Binding BgdColor}">
                                             <Grid.GestureRecognizers>
                                                 <TapGestureRecognizer Command="{Binding Path=BindingContext.DoubleTapCommand, Source={x:Reference ListPageViewModel}}" NumberOfTapsRequired="2" CommandParameter="{Binding .}"/>
+                                                <SwipeGestureRecognizer Command="{Binding Path=BindingContext.SwipeRightCommand, Source={x:Reference ListPageViewModel}}" Direction="Right" CommandParameter="{Binding .}"/>
+                                                <SwipeGestureRecognizer Command="{Binding Path=BindingContext.SwipeLeftCommand, Source={x:Reference ListPageViewModel}}" Direction="Left" CommandParameter="{Binding .}"/>
                                             </Grid.GestureRecognizers>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="25"/>

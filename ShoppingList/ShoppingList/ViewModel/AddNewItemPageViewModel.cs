@@ -88,7 +88,8 @@ namespace ShoppingList.ViewModel
                         ShopID = Shop.ShopID,
                         IsChecked = false,
                         Name = ItemName,
-                        Quantity = StepperValue.Value
+                        Quantity = StepperValue.Value,
+                        IsPresent = true
                     });
 
                     UserDialogs.Instance.Toast("Dodano nowy przedmiot.");

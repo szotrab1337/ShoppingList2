@@ -9,9 +9,9 @@
              x:Name="ShopsListPageViewModel"
              BackgroundColor="#f2f2f2">
     <ContentPage.Content>
-        <AbsoluteLayout>
-            <ScrollView AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
-            <StackLayout>
+        <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <ScrollView AbsoluteLayout.LayoutFlags="All"  AbsoluteLayout.LayoutBounds="0,0,1,1">
+                <StackLayout>
                     <ListView
                       ItemsSource="{Binding Shops, Mode=TwoWay}"
                         Grid.Column="0"
@@ -34,9 +34,6 @@
                                             CommandParameter="{Binding .}"/>
                                     </ViewCell.ContextActions>
                                     <Grid>
-                                        <!--<Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenShopCommand,  Source={x:Reference ShopsListPageViewModel}}" NumberOfTapsRequired="1" CommandParameter="{Binding .}"/>
-                                        </Grid.GestureRecognizers>-->
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="25"/>
                                             <ColumnDefinition Width="*"/>
@@ -59,7 +56,6 @@
                          AbsoluteLayout.LayoutFlags="PositionProportional"
                          AbsoluteLayout.LayoutBounds=".95,.95,60,60"
                             Command="{Binding OpenNewShopCommand}"/>
-                         <!--Clicked="AddItemClicked"-->
         </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -115,6 +116,20 @@ namespace ShoppingList.ViewModel
         //}
 
         public async void LoadShops()
+        {
+            try
+            {
+                UserDialogs.Instance.ShowLoading("Ładowanie...", MaskType.Black);
+                await Loading();
+                UserDialogs.Instance.HideLoading();
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
+        public async Task Loading()
         {
             try
             {

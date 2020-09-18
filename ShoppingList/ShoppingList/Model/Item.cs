@@ -14,6 +14,20 @@ namespace ShoppingList.Model
         public int ItemID { get; set; }
         public int ShopID { get; set; }
         public string Name { get; set; }
+        public bool IsPresent
+        {
+            get
+            {
+                return _IsPresent;
+            }
+            set
+            {
+                _IsPresent = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private bool _IsPresent { get; set; }
+
         public bool IsChecked
         {
             get { return _IsChecked; }
@@ -42,6 +56,23 @@ namespace ShoppingList.Model
 
         [Ignore]
         private TextDecorations _TextDec { get; set; }
+
+        [Ignore]
+        public Color BgdColor
+        {
+            get
+            {
+                return _BgdColor;
+            }
+            set
+            {
+                _BgdColor = value;
+                NotifyPropertyChanged();              
+            }
+        }
+
+        [Ignore]
+        private Color _BgdColor { get; set; }
         public double Quantity { get; set; }
         [Ignore]
         public int Number { get; set; }
