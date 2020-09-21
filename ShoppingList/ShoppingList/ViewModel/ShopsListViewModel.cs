@@ -1,4 +1,5 @@
 ﻿using Acr.UserDialogs;
+using Newtonsoft.Json;
 using ShoppingList.Model;
 using ShoppingList.View;
 using System;
@@ -6,6 +7,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -31,6 +34,9 @@ namespace ShoppingList.ViewModel
 
         public ShopsListViewModel(INavigation navigation)
         {
+                        ServicePointManager.ServerCertificateValidationCallback +=
+                    (sender, cert, chain, sslPolicyErrors) => true;
+
             this.Navigation = navigation;
 
             Shops = new ObservableCollection<Shop>();
@@ -59,6 +65,25 @@ namespace ShoppingList.ViewModel
             });
 
             LoadShops();
+            //TestJson();
+        }
+
+        //public async void TestJson()
+        //{
+        //    Uri uri = new Uri(string.Format("http://192.168.1.100:7500/items", string.Empty));
+        //    HttpClient httpClient = new HttpClient();
+        //    ObservableCollection<SqlItem> SqlItems = new ObservableCollection<SqlItem>();
+
+        //    var resposne = await httpClient.GetStringAsync(uri);
+
+        //    //var content = await resposne.Content.ReadAsStringAsync();
+        //    List<SqlItem> sqlItems = JsonConvert.DeserializeObject<List<SqlItem>>(resposne);
+        //    UserDialogs.Instance.Alert(sqlItems[0].Name.ToString());
+        //}
+
+        public interface IHTTPClientHandlerCreationService
+        {
+            HttpClientHandler GetInsecureHandler();
         }
 
         public INavigation Navigation { get; set; }

@@ -5,67 +5,71 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="ShoppingList.View.ListPage"
-             Title="{Binding Title, StringFormat='Lista zakupów - {0}'}"
+             Title ="Lista przedmiotów"
              BackgroundColor="#f2f2f2"
              x:Name="ListPageViewModel">
+             <!--Title="{Binding Title, StringFormat='Lista zakupów - {0}'}"-->
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="refresh12.png"  Command="{Binding Path=BindingContext.RefreshCommand, Source={x:Reference ListPageViewModel}}"/>
+        <ToolbarItem Text="Importuj" IconImageSource="download2.png"  Command="{Binding Path=BindingContext.ImportCommand, Source={x:Reference ListPageViewModel}}" Order="Secondary"/>
+        <ToolbarItem  Text="Eksportuj"  Command="{Binding Path=BindingContext.ExportCommand, Source={x:Reference ListPageViewModel}}" Priority="1" Order="Secondary"/>
+        <ToolbarItem  Text="Odznacz wszystko"  Command="{Binding Path=BindingContext.UnCheckAllCommand, Source={x:Reference ListPageViewModel}}" Priority="1" Order="Secondary"/>
+        <ToolbarItem  Text="Usuń kupione"  Command="{Binding Path=BindingContext.DeleteCheckedCommand, Source={x:Reference ListPageViewModel}}" Priority="1" Order="Secondary"/>
+        <ToolbarItem  Text="Usuń wszystko"  Command="{Binding Path=BindingContext.DeleteAllCommand, Source={x:Reference ListPageViewModel}}" Priority="1" Order="Secondary"/>
+        <ToolbarItem  IconImageSource="refresh12.png"  Command="{Binding Path=BindingContext.RefreshCommand, Source={x:Reference ListPageViewModel}}"  />
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <AbsoluteLayout>
-            <ScrollView AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
-                <StackLayout>
-                    <Grid VerticalOptions="EndAndExpand">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="285"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <ListView 
+            <StackLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+                <Grid VerticalOptions="EndAndExpand">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="285"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ListView 
                          ItemsSource="{Binding Items, Mode=TwoWay}"
                          Grid.Column="0"
                          Grid.Row="0"
                          Grid.ColumnSpan="3"
                          SelectionMode="None">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <ViewCell>
-                                        <ViewCell.ContextActions>
-                                            <MenuItem Text="Edytuj"
-                                                     Command="{Binding Path=BindingContext.EditCommand, Source={x:Reference ListPageViewModel}}"                                          
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <ViewCell.ContextActions>
+                                        <MenuItem Text="Edytuj"
+                                           Command="{Binding Path=BindingContext.EditCommand, Source={x:Reference ListPageViewModel}}"                                          
                                           IsDestructive="True"
                                           CommandParameter="{Binding .}"/>
-                                            <MenuItem Text="Usuń"
+                                        <MenuItem Text="Usuń"
                                           Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference ListPageViewModel}}" 
                                           IsDestructive="True"
                                           CommandParameter="{Binding .}"/>
-                                        </ViewCell.ContextActions>
-                                        <Grid BackgroundColor="{Binding BgdColor}">
-                                            <Grid.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding Path=BindingContext.DoubleTapCommand, Source={x:Reference ListPageViewModel}}" NumberOfTapsRequired="2" CommandParameter="{Binding .}"/>
-                                                <SwipeGestureRecognizer Command="{Binding Path=BindingContext.SwipeRightCommand, Source={x:Reference ListPageViewModel}}" Direction="Right" CommandParameter="{Binding .}"/>
-                                                <SwipeGestureRecognizer Command="{Binding Path=BindingContext.SwipeLeftCommand, Source={x:Reference ListPageViewModel}}" Direction="Left" CommandParameter="{Binding .}"/>
-                                            </Grid.GestureRecognizers>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="25"/>
-                                                <ColumnDefinition Width="20"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="20"/>
-                                            </Grid.ColumnDefinitions>
-                                            <StackLayout Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="4">
-                                                <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"  Grid.Column="0" /> <!--CheckedChanged="OnCheckChanged"-->
-                                                <Label TextDecorations="{Binding TextDec}" FontAttributes="Bold"  Text="{Binding Number}" Margin="2" HorizontalOptions="Start" VerticalOptions="Center"  Grid.Column="1">
-                                                </Label>
-                                                <Label TextDecorations="{Binding TextDec}"  Text="{Binding Name}" VerticalOptions="Center" HorizontalOptions="Start" Grid.Column="2"/>
-                                                <Label TextDecorations="{Binding TextDec}" Text="{Binding Quantity, StringFormat='{0:F1}x'}" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Grid.Column="3" Margin="0,0,10,0"/>
-                                            </StackLayout>
-                                        </Grid>
-                                    </ViewCell>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Grid>
-                </StackLayout>
-            </ScrollView>
+                                    </ViewCell.ContextActions>
+                                    <Grid BackgroundColor="{Binding BgdColor}">
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.DoubleTapCommand, Source={x:Reference ListPageViewModel}}" NumberOfTapsRequired="2" CommandParameter="{Binding .}"/>
+                                            <SwipeGestureRecognizer Command="{Binding Path=BindingContext.SwipeRightCommand, Source={x:Reference ListPageViewModel}}" Direction="Right" CommandParameter="{Binding .}"/>
+                                            <SwipeGestureRecognizer Command="{Binding Path=BindingContext.SwipeLeftCommand, Source={x:Reference ListPageViewModel}}" Direction="Left" CommandParameter="{Binding .}"/>
+                                        </Grid.GestureRecognizers>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="25"/>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="20"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackLayout Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="4">
+                                            <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"  Grid.Column="0" />
+                                            <Label TextDecorations="{Binding TextDec}" FontAttributes="Bold"  Text="{Binding Number}" Margin="2" HorizontalOptions="Start" VerticalOptions="Center"  Grid.Column="1">
+                                            </Label>
+                                            <Label TextDecorations="{Binding TextDec}"  Text="{Binding Name}" VerticalOptions="Center" HorizontalOptions="Start" Grid.Column="2"/>
+                                            <Label TextDecorations="{Binding TextDec}" Text="{Binding Quantity, StringFormat='{0:F1}x'}" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Grid.Column="3" Margin="0,0,10,0"/>
+                                        </StackLayout>
+                                    </Grid>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </StackLayout>
             <ImageButton Source="add.png" BackgroundColor="Transparent"
                          AbsoluteLayout.LayoutFlags="PositionProportional"
                          AbsoluteLayout.LayoutBounds=".95,.95,60,60"
@@ -73,5 +77,3 @@
         </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>
-<!--Clicked="EditItem"-->
-<!--Clicked="DeleteItem"-->

@@ -1,4 +1,5 @@
 ﻿using Acr.UserDialogs;
+using Newtonsoft.Json;
 using ShoppingList.Model;
 using ShoppingList.View;
 using System;
@@ -6,10 +7,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 namespace ShoppingList.ViewModel
 {
@@ -45,6 +49,11 @@ namespace ShoppingList.ViewModel
             RefreshCommand = new Command(RefreshAction);
             SwipeRightCommand = new Command(SwipeRightAction);
             SwipeLeftCommand = new Command(SwipeLeftAction);
+            ImportCommand = new Command(ImportAction);
+            ExportCommand = new Command(ExportAction);
+            UnCheckAllCommand = new Command(UnCheckAllAction);
+            DeleteCheckedCommand = new Command(DeleteCheckedAction);
+            DeleteAllCommand = new Command(DeleteAllAction);
 
             MessagingCenter.Subscribe<AddNewItemPageViewModel>(this, "Refresh", (LoadAgain) =>
             {
@@ -67,6 +76,11 @@ namespace ShoppingList.ViewModel
         public ICommand RefreshCommand { get; set; }
         public ICommand SwipeRightCommand { get; set; }
         public ICommand SwipeLeftCommand { get; set; }
+        public ICommand ImportCommand { get; set; }
+        public ICommand ExportCommand { get; set; }
+        public ICommand UnCheckAllCommand { get; set; }
+        public ICommand DeleteCheckedCommand { get; set; }
+        public ICommand DeleteAllCommand { get; set; }
         public Shop Shop { get; set; }
 
         public string Title
@@ -180,7 +194,7 @@ namespace ShoppingList.ViewModel
             }
             catch (Exception ex)
             {
-                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+                //UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
             }
         }
 
@@ -338,6 +352,236 @@ namespace ShoppingList.ViewModel
                 UserDialogs.Instance.ShowLoading("Ładowanie...", MaskType.Black);
                 await LoadData();
                 UserDialogs.Instance.HideLoading();
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
+        public async void ImportAction()
+        {
+            try
+            {
+                var choices = new[] { "Z chmury", "Ze schowka" };
+
+                var choice = await UserDialogs.Instance.ActionSheetAsync("Wybierz", "Anuluj", string.Empty, CancellationToken.None, choices);
+
+                if (choice == "Z chmury")
+                {
+                    Uri defaultUri = new Uri(string.Format("http://192.168.1.100:7500/", string.Empty));
+                    Uri uri = new Uri(defaultUri, "items/listbyname/" + Shop.Name);
+
+                    HttpClient httpClient = new HttpClient();
+                    string resposne = await httpClient.GetStringAsync(uri);
+
+                    List<SqlItem> sqlItems = JsonConvert.DeserializeObject<List<SqlItem>>(resposne);
+                    httpClient.Dispose();
+
+                    foreach (SqlItem item in sqlItems)
+                    {
+                        Item newItem = new Item()
+                        {
+                            ShopID = Shop.ShopID,
+                            IsChecked = false,
+                            Name = item.Name,
+                            Quantity = item.Quantity,
+                            IsPresent = true,
+                        };
+
+                        await App.Database.SaveItemAsync(newItem);
+                    }
+                    LoadItems();
+                    UserDialogs.Instance.Alert("Pomyślnie załadowano " + sqlItems.Count + " " + GetInfo(sqlItems.Count) + ".", "Powodzenie!", "Ok");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                if (ex.GetType().IsAssignableFrom(typeof(HttpRequestException)))
+                {
+                    UserDialogs.Instance.Alert("Brak przedmiotów do załadowania.", "Błąd", "Ok");
+                }
+                else
+                {
+                    UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+                }
+            }
+        }
+
+        public string GetInfo(int count)
+        {
+            string info;
+            switch (count)
+            {
+                case 1:
+                    info = "przedmiot";
+                    break;
+                case 2:
+                case 3:
+                case 4:
+                    info = "przedmioty";
+                    break;
+                default:
+                    info = "przedmiotów";
+                    break;
+            }
+            return info;
+        }
+
+        public async void ExportAction()
+        {
+            try
+            {
+                var choices = new[] { "Do chmury", "Do schowka" };
+
+                var choice = await UserDialogs.Instance.ActionSheetAsync("Wybierz", "Anuluj", string.Empty, CancellationToken.None, choices);
+
+                if (choice == "Do chmury")
+                {
+                    if (Items.Count == 0)
+                    {
+                        UserDialogs.Instance.Alert("W sklepie nie ma żadnych przedmiotów", "Błąd", "OK");
+                        return;
+                    }
+
+                    Uri defaultUri = new Uri(string.Format("http://192.168.1.100:7500/", string.Empty));
+                    Uri uri = new Uri(defaultUri, "items/addshop/" + Shop.Name);
+
+                    HttpClient httpClient = new HttpClient();
+                    string resposne = await httpClient.GetStringAsync(uri);
+
+
+                    foreach (Item item in Items)
+                    {
+                        Uri AddUri = new Uri(string.Format("http://192.168.1.100:7500/", string.Empty));
+                        Uri addUri = new Uri(defaultUri, "items/additem/" + Shop.Name + "/" + item.Name + "/" + item.Quantity.ToString().Replace(',', '.'));
+
+                        HttpClient Client = new HttpClient();
+                        string resposne1 = await Client.GetStringAsync(addUri);
+                    }
+                    UserDialogs.Instance.Alert("Pomyślnie wyeksportowano " + Items.Count + " " + GetInfo(Items.Count) + ".", "Powodzenie!", "Ok");
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType().IsAssignableFrom(typeof(HttpRequestException)))
+                {
+                    UserDialogs.Instance.Alert("Podłącz się do sieci domowej.", "Błąd", "Ok");
+                }
+                else
+                {
+                    UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+                }
+            }
+        }
+
+        public async void UnCheckAllAction()
+        {
+            try
+            {
+                List<Item> items = Items.Where(x => x.IsChecked == true).ToList();
+
+                if(items.Count == 0)
+                {
+                    UserDialogs.Instance.Alert("Brak przedmiotów do odznaczenia w sklepie.", "Błąd", "OK");
+                    return;
+                }
+
+                var result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig
+                {
+                    Message = "Czy na pewno chcesz odznaczyć wszystkie przedmioty?",
+                    OkText = "Tak",
+                    CancelText = "Nie",
+                    Title = "Potwierdzenie"
+                });
+
+                if (!result)
+                {
+                    return;
+                }
+
+                foreach (Item item in items)
+                {
+                    item.IsChecked = false;
+                    await App.Database.UpdateItemAsync(item);
+                }
+                LoadItems();
+                UserDialogs.Instance.Alert("Pomyślnie odznaczono " + items.Count + " " + GetInfo(items.Count) + ".", "Informacja", "OK");
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
+        public async void DeleteCheckedAction()
+        {
+            try
+            {
+                List<Item> items = Items.Where(x => x.IsChecked == true).ToList();
+
+                if (items.Count == 0)
+                {
+                    UserDialogs.Instance.Alert("Brak przedmiotów do usunięcia w sklepie.", "Błąd", "OK");
+                    return;
+                }
+
+                var result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig
+                {
+                    Message = "Czy na pewno chcesz usunać wszystkie kupione przedmioty?",
+                    OkText = "Tak",
+                    CancelText = "Nie",
+                    Title = "Potwierdzenie"
+                });
+
+                if (!result)
+                {
+                    return;
+                }
+
+                foreach (Item item in items)
+                {
+                    await App.Database.DeleteItemAsync(item);
+                }
+                LoadItems();
+                UserDialogs.Instance.Alert("Pomyślnie usunięto " + items.Count + " " + GetInfo(items.Count) + ".", "Informacja", "OK");
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.Alert("Bład!\r\n\r\n" + ex.ToString(), "Błąd", "OK");
+            }
+        }
+
+        public async void DeleteAllAction()
+        {
+            try
+            {
+                if (Items.Count == 0)
+                {
+                    UserDialogs.Instance.Alert("Brak przedmiotów w sklepie.", "Błąd", "OK");
+                    return;
+                }
+
+                var result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig
+                {
+                    Message = "Czy na pewno chcesz usunąć wszystkie przedmioty?",
+                    OkText = "Tak",
+                    CancelText = "Nie",
+                    Title = "Potwierdzenie"
+                });
+
+                if (!result)
+                {
+                    return;
+                }
+
+                foreach (Item item in Items)
+                {
+                    await App.Database.DeleteItemAsync(item);
+                }
+                LoadItems();
+                UserDialogs.Instance.Alert("Pomyślnie usunięto wszystkie przedmioty.", "Informacja", "OK");
             }
             catch (Exception ex)
             {
