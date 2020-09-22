@@ -7,11 +7,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Xml;
+using System.Xml.Linq;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 
@@ -394,6 +398,10 @@ namespace ShoppingList.ViewModel
                     LoadItems();
                     UserDialogs.Instance.Alert("Pomyślnie załadowano " + sqlItems.Count + " " + GetInfo(sqlItems.Count) + ".", "Powodzenie!", "Ok");
                 }
+                else if (choice == "Do schowka")
+                {
+
+                }
             }
 
             catch (Exception ex)
@@ -401,6 +409,14 @@ namespace ShoppingList.ViewModel
                 if (ex.GetType().IsAssignableFrom(typeof(HttpRequestException)))
                 {
                     UserDialogs.Instance.Alert("Brak przedmiotów do załadowania.", "Błąd", "Ok");
+                }
+                else if (ex.GetType().IsAssignableFrom(typeof(WebException)))
+                {
+                    UserDialogs.Instance.Alert("Podłącz się do sieci domowej.", "Błąd", "Ok");
+                }
+                else if (ex.GetType().IsAssignableFrom(typeof(OperationCanceledException)))
+                {
+                    UserDialogs.Instance.Alert("Podłącz się do sieci domowej.", "Błąd", "Ok");
                 }
                 else
                 {
@@ -462,10 +478,52 @@ namespace ShoppingList.ViewModel
                     }
                     UserDialogs.Instance.Alert("Pomyślnie wyeksportowano " + Items.Count + " " + GetInfo(Items.Count) + ".", "Powodzenie!", "Ok");
                 }
+                else if (choice == "Do schowka")
+                {
+                    if (Items.Count == 0)
+                    {
+                        UserDialogs.Instance.Alert("W sklepie nie ma żadnych przedmiotów", "Błąd", "OK");
+                        return;
+                    }
+
+                    XElement items = new XElement("items");
+
+                    foreach (Item item in Items)
+                    {
+                        XElement newItem = new XElement("item",
+                            new XElement("name", item.Name),
+                            new XElement("quantity", item.Quantity),
+                            new XElement("isPresent", item.IsPresent),
+                            new XElement("isChecked", item.IsChecked)
+                            );
+
+                        items.Add(newItem);
+                    }
+
+                    XElement shop =
+                        new XElement("shop",
+                            new XElement("name", Shop.Name),
+                                items
+                                );
+
+                    await Share.RequestAsync(new ShareTextRequest
+                    {
+                        Text = shop.ToString(),
+                        Title = "Udostępniona lista zakupów"
+                    });
+                }
             }
             catch (Exception ex)
             {
                 if (ex.GetType().IsAssignableFrom(typeof(HttpRequestException)))
+                {
+                    UserDialogs.Instance.Alert("Podłącz się do sieci domowej.", "Błąd", "Ok");
+                }
+                else if (ex.GetType().IsAssignableFrom(typeof(WebException)))
+                {
+                    UserDialogs.Instance.Alert("Podłącz się do sieci domowej.", "Błąd", "Ok");
+                }
+                else if (ex.GetType().IsAssignableFrom(typeof(OperationCanceledException)))
                 {
                     UserDialogs.Instance.Alert("Podłącz się do sieci domowej.", "Błąd", "Ok");
                 }
@@ -545,6 +603,7 @@ namespace ShoppingList.ViewModel
                     await App.Database.DeleteItemAsync(item);
                 }
                 LoadItems();
+                MessagingCenter.Send(this, "Refresh");
                 UserDialogs.Instance.Alert("Pomyślnie usunięto " + items.Count + " " + GetInfo(items.Count) + ".", "Informacja", "OK");
             }
             catch (Exception ex)
@@ -581,6 +640,7 @@ namespace ShoppingList.ViewModel
                     await App.Database.DeleteItemAsync(item);
                 }
                 LoadItems();
+                MessagingCenter.Send(this, "Refresh");
                 UserDialogs.Instance.Alert("Pomyślnie usunięto wszystkie przedmioty.", "Informacja", "OK");
             }
             catch (Exception ex)
