@@ -398,9 +398,73 @@ namespace ShoppingList.ViewModel
                     LoadItems();
                     UserDialogs.Instance.Alert("Pomyślnie załadowano " + sqlItems.Count + " " + GetInfo(sqlItems.Count) + ".", "Powodzenie!", "Ok");
                 }
-                else if (choice == "Do schowka")
+                else if (choice == "Ze schowka")
                 {
+                    string listXml = await Clipboard.GetTextAsync();
+                    XmlDocument list = new XmlDocument();
+                    list.LoadXml(listXml);
 
+                    foreach (XmlElement node in list)
+                    {
+                        if(node.Attributes["type"].Value != "single")
+                        {
+                            UserDialogs.Instance.Alert("Podjęto próbę załadowania złej listy.", "Błąd", "OK");
+                            return;
+                        }
+                        foreach (XmlElement node1 in node)
+                        {
+                            if(node1.Name == "name")
+                            {
+                                if(node1.InnerText != Shop.Name)
+                                {
+                                    var result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig
+                                    {
+                                        CancelText = "Anuluj",
+                                        Message = "Obecna nazwa sklepu różni się od obecnie włączonego.\r\nCzy chcesz kontynuować?",
+                                        OkText = "Tak",
+                                        Title = "Informacja"
+                                    });
+
+                                    if(!result)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (node1.Name == "items")
+                            {
+                                foreach (XmlNode node2 in node1)
+                                {
+                                    string Name = "";
+                                    double Quantity = 1;
+                                    bool IsChecked = false, IsPresent = true;
+                                    foreach (XmlNode node3 in node2)
+                                    {
+
+                                        if (node3.Name == "name")
+                                            Name = node3.InnerText;
+                                        if (node3.Name == "quantity")
+                                            Quantity = Convert.ToDouble((node3.InnerText).Replace('.',','));
+                                        if (node3.Name == "isChecked")
+                                            IsChecked = Convert.ToBoolean(node3.InnerText);
+                                        if (node3.Name == "isPresent")
+                                            IsPresent = Convert.ToBoolean(node3.InnerText);
+                                    }
+
+                                    await App.Database.SaveItemAsync(new Item
+                                    {
+                                        ShopID = Shop.ShopID,
+                                        IsChecked = IsChecked,
+                                        IsPresent = IsPresent,
+                                        Name = Name,
+                                        Quantity = Quantity
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    LoadItems();
                 }
             }
 
@@ -501,7 +565,7 @@ namespace ShoppingList.ViewModel
                     }
 
                     XElement shop =
-                        new XElement("shop",
+                        new XElement("shop", new XAttribute("type", "single"),
                             new XElement("name", Shop.Name),
                                 items
                                 );
