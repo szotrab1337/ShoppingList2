@@ -13,11 +13,12 @@ namespace ShoppingList.View
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SettingsPage : ContentPage
     {
+        SettingsPageViewModel viewModel;
         public SettingsPage()
         {
             InitializeComponent();
 
-            BindingContext = new SettingsPageViewModel();
+            BindingContext = viewModel = new SettingsPageViewModel();
         }
     }
 }

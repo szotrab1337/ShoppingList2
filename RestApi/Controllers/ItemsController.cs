@@ -50,6 +50,34 @@ namespace RestApi.Controllers
             return items;
         }
 
+        [Route("listbyid/{id}")]
+        public List<SqlItem> Get5(int id)
+        {
+            SqlShop shop = Context.SqlShops.Where(x => x.ShopID == id).FirstOrDefault();
+
+            List<SqlItem> items = Context.SqlItems.Where(x => x.ShopID == shop.ShopID).ToList();
+            foreach (SqlItem item in items)
+            {
+                item.SqlShop = shop;
+            }
+
+            return items;
+        }
+
+        [Route("listshops")]
+        public List<SqlShop> GetShops()
+        {
+            List<SqlShop> Shops = Context.SqlShops.ToList();
+            return Shops;
+        }
+
+        [Route("listshopsbyname/{name}")]
+        public List<SqlShop> GetShopsByName(string name)
+        {
+            List<SqlShop> Shops = Context.SqlShops.Where(x => x.Name == name).ToList();
+            return Shops;
+        }
+
         [Route("addshop/{shopname}")]
         public SqlShop Add(string shopname)
         {
@@ -81,6 +109,24 @@ namespace RestApi.Controllers
             Context.SaveChanges();
 
             return item;
+        }
+
+        [Route("removeitems/{id}")]
+        public bool Remove(int id)
+        {
+            List<SqlItem> SqlItems = Context.SqlItems.Where(x => x.ShopID == id).ToList();
+
+            foreach (SqlItem item in SqlItems)
+            {
+                Context.SqlItems.Remove(item);
+                Context.SaveChanges();
+            }
+
+            SqlShop sqlShop = Context.SqlShops.Where(x => x.ShopID == id).FirstOrDefault();
+            Context.SqlShops.Remove(sqlShop);
+            Context.SaveChanges();
+
+            return true;
         }
     }
 }

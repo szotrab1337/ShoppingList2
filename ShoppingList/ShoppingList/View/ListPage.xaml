@@ -30,7 +30,10 @@
                          Grid.Column="0"
                          Grid.Row="0"
                          Grid.ColumnSpan="3"
-                         SelectionMode="None">
+                         SelectionMode="None"
+                        IsPullToRefreshEnabled="True"
+                        RefreshCommand="{Binding Path=BindingContext.RefreshCommand, Source={x:Reference ListPageViewModel}}"
+                        IsRefreshing="{Binding IsRefreshing}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell>

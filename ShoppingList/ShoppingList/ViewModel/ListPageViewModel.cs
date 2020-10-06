@@ -93,6 +93,12 @@ namespace ShoppingList.ViewModel
             set { _Title = value; OnPropertyChanged("Title"); }
         }
         private string _Title;
+        public bool IsRefreshing
+        {
+            get { return _IsRefreshing; }
+            set { _IsRefreshing = value; OnPropertyChanged("IsRefreshing"); }
+        }
+        private bool _IsRefreshing;
 
         public ObservableCollection<Item> Items
         {
@@ -119,6 +125,7 @@ namespace ShoppingList.ViewModel
             {
                 UserDialogs.Instance.ShowLoading("Ładowanie...", MaskType.Black);
                 await LoadData();
+                //MessagingCenter.Send(this, "Refresh");
                 UserDialogs.Instance.HideLoading();
             }
             catch (Exception ex)
@@ -132,7 +139,26 @@ namespace ShoppingList.ViewModel
             try
             {
                 Items.Clear();
-                List<Item> allItems = (await App.Database.GetItemsByShopAsync(Shop.ShopID)).OrderByDescending(x => x.IsPresent).ThenBy(x => x.IsChecked).ThenBy(x => x.Name).ToList();
+                List<Item> allItems = new List<Item>();
+
+                Setting setting = await App.Database.GetSettingsAsync();
+                if (setting == null)
+                {
+                    await App.Database.InsertSettingAsync(new Setting
+                    {
+                        SortByName = true
+                    });
+                    setting = await App.Database.GetSettingsAsync();
+                }
+
+                if (setting.SortByName == true)
+                {
+                    allItems = (await App.Database.GetItemsByShopAsync(Shop.ShopID)).OrderByDescending(x => x.IsPresent).ThenBy(x => x.IsChecked).ThenBy(x => x.Name).ToList();
+                }
+                else
+                {
+                    allItems = (await App.Database.GetItemsByShopAsync(Shop.ShopID)).OrderByDescending(x => x.IsPresent).ThenBy(x => x.IsChecked).ToList();
+                }
 
                 for (int i = 0; i < allItems.Count; i++)
                 {
@@ -355,6 +381,7 @@ namespace ShoppingList.ViewModel
             {
                 UserDialogs.Instance.ShowLoading("Ładowanie...", MaskType.Black);
                 await LoadData();
+                IsRefreshing = false;
                 UserDialogs.Instance.HideLoading();
             }
             catch (Exception ex)
@@ -374,9 +401,30 @@ namespace ShoppingList.ViewModel
                 if (choice == "Z chmury")
                 {
                     Uri defaultUri = new Uri(string.Format("http://192.168.1.100:7500/", string.Empty));
-                    Uri uri = new Uri(defaultUri, "items/listbyname/" + Shop.Name);
-
                     HttpClient httpClient = new HttpClient();
+
+                    Uri shopsUri = new Uri(defaultUri, "items/listshopsbyname/" + Shop.Name);
+                    string resposneShops = await httpClient.GetStringAsync(shopsUri);
+
+                    List<SqlShop> sqlShops = JsonConvert.DeserializeObject<List<SqlShop>>(resposneShops);
+                    if (sqlShops.Count == 0)
+                    {
+                        UserDialogs.Instance.Toast("Brak sklepów do załadowania.");
+                        return;
+                    }
+
+                    var shopsChoices = new[] { string.Empty };
+                    List<string> Shops = new List<string>();
+                    foreach (SqlShop shop in sqlShops)
+                    {
+                        Shops.Add(shop.Name + " " + shop.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss") + " Id:" + shop.ShopID.ToString());
+                    }
+                    shopsChoices = Shops.ToArray();
+
+                    var choiceShop = await UserDialogs.Instance.ActionSheetAsync("Wybierz", "Anuluj", string.Empty, CancellationToken.None, shopsChoices);
+                    string shopId = choiceShop.Substring(choiceShop.IndexOf("Id:") + 3);
+
+                    Uri uri = new Uri(defaultUri, "items/listbyid/" + shopId);
                     string resposne = await httpClient.GetStringAsync(uri);
 
                     List<SqlItem> sqlItems = JsonConvert.DeserializeObject<List<SqlItem>>(resposne);
@@ -396,6 +444,7 @@ namespace ShoppingList.ViewModel
                         await App.Database.SaveItemAsync(newItem);
                     }
                     LoadItems();
+                    MessagingCenter.Send(this, "Refresh");
                     UserDialogs.Instance.Alert("Pomyślnie załadowano " + sqlItems.Count + " " + GetInfo(sqlItems.Count) + ".", "Powodzenie!", "Ok");
                 }
                 else if (choice == "Ze schowka")
@@ -427,7 +476,7 @@ namespace ShoppingList.ViewModel
 
                                     if(!result)
                                     {
-                                        break;
+                                        return;
                                     }
                                 }
                             }
@@ -464,6 +513,7 @@ namespace ShoppingList.ViewModel
                             }
                         }
                     }
+                    UserDialogs.Instance.Alert("Pomyślnie załadowano przedmioty.", "Powodzenie!", "Ok");
                     LoadItems();
                 }
             }

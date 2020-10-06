@@ -5,16 +5,30 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="ShoppingList.View.SettingsPage"
-             xmlns:local="ViewModel"
              Title="Ustawienia"
-             BackgroundColor="#f2f2f2">
+             BackgroundColor="#f2f2f2"
+             x:Name="SettingsViewModel">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Ustawienia"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-            <Button Text="TEST" Command="{Binding TEST}"/>
-            <Label Text="{Binding Text}"/>
+            <Grid Margin="15,15,15,15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Text="Sortuj produkty alfabetycznie: " Grid.Row="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Column="0" Margin="5,0,0,0"/>
+                <Switch Grid.Row="0" VerticalOptions="Center" HorizontalOptions="StartAndExpand" Grid.Column="1" IsToggled="{Binding SortIsToggled}"/>
+                <Button Command="{Binding ImportCommand}"  CornerRadius="6" Text="Importuj sklep" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Margin="30,10,30,0" BackgroundColor="#3399FF" TextColor="White" />
+                <Button Command="{Binding ExportCommand}" CornerRadius="6" Text="Eksportuj sklep" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" Margin="30,10,30,0" BackgroundColor="#3399FF" TextColor="White" />
+                <Button Command="{Binding DeleteFromCloudCommand}"  CornerRadius="6" Text="Usuń sklep z chmury" Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0" Margin="30,10,30,0" BackgroundColor="#3399FF" TextColor="White"/>
+                <Button Command="{Binding DeleteAllShopsCommand}" CornerRadius="6" Text="Usuń wszystkie sklepy" Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0" Margin="30,10,30,0" BackgroundColor="#3399FF" TextColor="White"/>
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

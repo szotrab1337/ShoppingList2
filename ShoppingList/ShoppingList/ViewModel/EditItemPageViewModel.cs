@@ -86,15 +86,9 @@ namespace ShoppingList.ViewModel
                 }
                 else
                 {
-                    Item itemToUpdate = new Item
-                    {
-                        ItemID = Item.ItemID,
-                        ShopID = Item.ShopID,
-                        IsChecked = Item.IsChecked,
-                        Name = ItemName,
-                        Quantity = StepperValue.Value
-                    };
-                    await App.Database.UpdateItemAsync(itemToUpdate);
+                    Item.Name = ItemName;
+                    Item.Quantity = StepperValue.Value;
+                    await App.Database.UpdateItemAsync(Item);
 
                     UserDialogs.Instance.Toast("Dokonano edycji przedmiotu.");
                     MessagingCenter.Send(this, "Refresh");

@@ -15,6 +15,7 @@ namespace ShoppingList.Model
             _database = new SQLiteAsyncConnection(dbPath);
             _database.CreateTableAsync<Item>().Wait();
             _database.CreateTableAsync<Shop>().Wait();
+            _database.CreateTableAsync<Setting>().Wait();
         }
 
         public Task<List<Item>> GetItemsAsync()
@@ -41,6 +42,11 @@ namespace ShoppingList.Model
         public Task<Shop> GetShopByID(int id)
         {
             return _database.Table<Shop>().Where(x => x.ShopID == id).FirstOrDefaultAsync();
+        }
+
+        public Task<Shop> GetShopByName(string Name)
+        {
+            return _database.Table<Shop>().Where(x => x.Name == Name).FirstOrDefaultAsync();
         }
 
         public Task SaveItemAsync(Item item)
@@ -75,6 +81,21 @@ namespace ShoppingList.Model
         public Task DeleteShopAsync(Shop shop)
         {
             return _database.DeleteAsync(shop);
+        }
+
+        public Task<Setting> GetSettingsAsync()
+        {
+            return _database.Table<Setting>().FirstOrDefaultAsync();
+        }
+
+        public Task InsertSettingAsync(Setting setting)
+        {
+            return _database.InsertAsync(setting);
+        }
+
+        public Task UpdateSettingAsync(Setting setting)
+        {
+            return _database.UpdateAsync(setting);
         }
     }
 }

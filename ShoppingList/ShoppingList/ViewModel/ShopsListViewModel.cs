@@ -182,7 +182,6 @@ namespace ShoppingList.ViewModel
                     }
                     allShops[i].NumberOfPositions = quantity;
                     Shops.Add(allShops[i]);
-
                 }
             }
             catch (Exception ex)
@@ -231,6 +230,13 @@ namespace ShoppingList.ViewModel
                     if (!string.IsNullOrEmpty(result.Text))
                     {
                         //string text = result.Text.First().ToString().ToUpper() + result.Text.Substring(1);
+                        Shop checkShop = await App.Database.GetShopByName(result.Text.First().ToString().ToUpper() + result.Text.Substring(1));
+                        if(checkShop!=null)
+                        {
+                            UserDialogs.Instance.Alert("Sklep o podanej nazwie już istnieje!", "Błąd", "OK");
+                            return;
+                        }
+
                         await App.Database.SaveShopAsync(new Shop { Name = result.Text.First().ToString().ToUpper() + result.Text.Substring(1) });
                         Shop shop = (await App.Database.GetShopsAsync()).LastOrDefault();
                         shop.Number = Shops.Count + 1;
@@ -257,7 +263,42 @@ namespace ShoppingList.ViewModel
             try
             {
                 Shop shop = (Shop)sender;
-                await Navigation.PushAsync(new EditShopPage(shop.ShopID));
+                //await Navigation.PushAsync(new EditShopPage(shop.ShopID));
+                PromptResult result = await UserDialogs.Instance.PromptAsync(new PromptConfig
+                {
+                    Message = "Wprowadź nazwę sklepu",
+                    CancelText = "Anuluj",
+                    InputType = InputType.Name,
+                    IsCancellable = true,
+                    OkText = "Zapisz",
+                    Placeholder = "wprowadź nazwę",
+                    Title = "Edycja sklepu",
+                    Text = shop.Name
+                });
+
+                if (result.Ok)
+                {
+                    if (!string.IsNullOrEmpty(result.Text))
+                    {
+                        //string text = result.Text.First().ToString().ToUpper() + result.Text.Substring(1);
+                        Shop checkShop = await App.Database.GetShopByName(result.Text.First().ToString().ToUpper() + result.Text.Substring(1));
+                        if (checkShop != null)
+                        {
+                            UserDialogs.Instance.Alert("Sklep o podanej nazwie już istnieje!", "Błąd", "OK");
+                            return;
+                        }
+                        shop.Name = result.Text.First().ToString().ToUpper() + result.Text.Substring(1);
+                        Shops.Where(x => x.ShopID == shop.ShopID).FirstOrDefault().Name = result.Text.First().ToString().ToUpper() + result.Text.Substring(1);
+                        await App.Database.UpdateShopAsync(shop);
+                        UserDialogs.Instance.Toast("Edytowano sklep.");
+                        //MessagingCenter.Send(this, "Refresh");
+                        //await Navigation.PopToRootAsync();
+                    }
+                    else
+                    {
+                        UserDialogs.Instance.Alert("Wprowadź poprawną nazwę sklepu!", "Błąd", "OK");
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -280,10 +321,18 @@ namespace ShoppingList.ViewModel
 
                 if (result)
                 {
+                    UserDialogs.Instance.ShowLoading("Usuwanie...", MaskType.Black);
                     await App.Database.DeleteShopAsync(shop);
                     UserDialogs.Instance.Toast("Usunięto sklep.");
                     Shops.Remove(shop);
                     Renumber();
+
+                    List<Item> Items = await App.Database.GetItemsByShopAsync(shop.ShopID);
+                    foreach (Item item in Items)
+                    {
+                        await App.Database.DeleteItemAsync(item);
+                    }
+                    UserDialogs.Instance.HideLoading();
                 }
             }
             catch (Exception ex)
